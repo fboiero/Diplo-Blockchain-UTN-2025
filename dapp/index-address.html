@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultar saldo por dirección</title>
+
+  <!-- PicoCSS (modo claro por defecto) -->
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Consultar Saldo por Dirección</h1>
+
+    <form id="formulario" onsubmit="return false;">
+      <label for="addressInput">Dirección Ethereum:</label>
+      <input type="text" id="addressInput" placeholder="0x..." required />
+
+      <button id="checkButton">Consultar Saldo</button>
+    </form>
+
+    <article style="margin-top: 2rem;">
+      <p id="walletAddress"><strong>Dirección:</strong> -</p>
+      <p id="balance"><strong>Saldo:</strong> -</p>
+    </article>
+  </main>
+
+  <!-- ethers.js v6 UMD -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+  <script src="main-address.js"></script>
+</body>
+</html>

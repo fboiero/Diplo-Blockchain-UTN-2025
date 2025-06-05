@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DApp - MetaMask Balance</title>
+
+  <!-- PicoCSS (modo claro por defecto) -->
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+
+</head>
+<body>
+  <main class="container">
+    <h1>Consultar Saldo con MetaMask</h1>
+
+    <section>
+      <button id="connectButton">🔗 Conectar con MetaMask</button>
+
+      <div id="accountSelector" style="display:none; margin-top: 1rem;">
+        <label for="accountList">Selecciona una cuenta:</label>
+        <select id="accountList"></select>
+      </div>
+
+      <article>
+        <p id="walletAddress"><strong>Dirección:</strong> -</p>
+        <p id="balance"><strong>Saldo:</strong> -</p>
+      </article>
+    </section>
+  </main>
+
+  <!-- ethers.js v6 (UMD para navegador) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
