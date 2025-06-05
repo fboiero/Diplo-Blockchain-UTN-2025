@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultar saldo ERC20</title>
+
+  <!-- PicoCSS -->
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Consultar Saldo de Token ERC20</h1>
+
+    <form onsubmit="return false;">
+      <label for="walletInput">Dirección de Wallet:</label>
+      <input type="text" id="walletInput" placeholder="0x..." required />
+
+      <button id="checkButton">Consultar Token</button>
+    </form>
+
+    <article style="margin-top: 2rem;">
+      <p><strong>Dirección ingresada:</strong> <span id="walletDisplay">-</span></p>
+      <p><strong>Token:</strong> <span id="tokenSymbol">-</span></p>
+      <p><strong>Balance:</strong> <span id="tokenBalance">-</span></p>
+    </article>
+  </main>
+
+  <!-- ethers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+  <script src="main-erc20.js"></script>
+</body>
+</html>

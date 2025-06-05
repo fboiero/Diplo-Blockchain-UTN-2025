@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saldo y Envío de Tokens FER</title>
+
+  <!-- PicoCSS -->
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Consultar y Enviar Tokens FER (ERC20)</h1>
+
+    <button id="connectButton">🔗 Conectar con MetaMask</button>
+
+    <article style="margin-top: 2rem;">
+      <p><strong>Cuenta conectada:</strong> <span id="account">-</span></p>
+      <p><strong>Token:</strong> <span id="tokenSymbol">-</span></p>
+      <p><strong>Saldo:</strong> <span id="tokenBalance">-</span></p>
+    </article>
+
+    <form id="sendForm" style="margin-top: 2rem; display: none;" onsubmit="return false;">
+      <label for="destinationInput">Dirección destino:</label>
+      <input type="text" id="destinationInput" placeholder="0x..." required />
+
+      <button id="sendButton" type="submit">🚀 Enviar 10 FER</button>
+    </form>
+
+    <p id="statusMessage"></p>
+  </main>
+
+  <!-- ethers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+  <script>
+    const erc20Address = "0x82ce2F45F289Db7F050CeBEdeFee3f9C3fF72a08";
+
+    const erc20Abi = [
+      "function balanceOf(address) view returns (uint256)",
+      "function symbol() view returns (string)",
+      "function decimals() view returns (uint8)",
+      "function transfer(address to, uint256 amount) returns (bool)"
+    ];
+
+    const connectButton = document.getElementById("connectButton");
+    const sendForm = document.getElementById("sendForm");
+    const sendButton = document.getElementById("sendButton");
+    const destinationInput = document.getElementById("destinationInput");
+
+    const accountDisplay = document.getElementById("account");
+    const tokenSymbol = document.getElementById("tokenSymbol");
+    const tokenBalance = document.getElementById("tokenBalance");
+    const statusMessage = document.getElementById("statusMessage");
+
+    let provider, signer, contract, decimals, symbol, userAccount;
+
+    connectButton.addEventListener("click", async () => {
+      if (!window.ethereum) {
+        alert("MetaMask no está instalado.");
+        return;
+      }
+
+      try {
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        userAccount = accounts[0];
+
+        provider = new ethers.BrowserProvider(window.ethereum);
+        signer = await provider.getSigner();
+        contract = new ethers.Contract(erc20Address, erc20Abi, signer);
+
+        [symbol, decimals] = await Promise.all([
+          contract.symbol(),
+          contract.decimals()
+        ]);
+
+        const rawBalance = await contract.balanceOf(userAccount);
+        const formattedBalance = ethers.formatUnits(rawBalance, decimals);
+
+        accountDisplay.textContent = userAccount;
+        tokenSymbol.textContent = symbol;
+        tokenBalance.textContent = `${formattedBalance} ${symbol}`;
+        sendForm.style.display = "block";
+        statusMessage.textContent = "";
+
+      } catch (err) {
+        console.error("Error al conectar:", err);
+        alert("Error al consultar saldo ERC20");
+      }
+    });
+
+    sendButton.addEventListener("click", async () => {
+      const destination = destinationInput.value.trim();
+
+      if (!ethers.isAddress(destination)) {
+        alert("Dirección de destino inválida.");
+        return;
+      }
+
+      try {
+        statusMessage.textContent = "⏳ Enviando tokens...";
+        const amount = ethers.parseUnits("10", decimals);
+        const tx = await contract.transfer(destination, amount);
+        await tx.wait();
+
+        statusMessage.textContent = `✅ 10 ${symbol} enviados a ${destination}`;
+
+        const updatedBalance = await contract.balanceOf(userAccount);
+        tokenBalance.textContent = `${ethers.formatUnits(updatedBalance, decimals)} ${symbol}`;
+      } catch (err) {
+        console.error("Error al enviar tokens:", err);
+        statusMessage.textContent = "❌ Error al enviar tokens.";
+      }
+    });
+  </script>
+</body>
+</html>
